@@ -4,7 +4,6 @@ const express = require("express");
 const postsRoutes = express.Router();
 const ValidationMiddleware = require("../middlewares/validate");
 const auth = require("../middlewares/auth");
-
 postsRoutes.post(
     "/create",
     auth,

@@ -3,29 +3,30 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const mainRouter = require("./routes/index");
-const { PORT } = require("./constants/constants");
-const { MONGO_URI } = require("./constants/constants");
+const {
+    PORT
+} = require("./constants/constants");
+const {
+    MONGO_URI
+} = require("./constants/constants");
 const bodyParser = require('body-parser');
 const app = express();
 const app2 = express();
 const http = require('http');
 const chatServer = http.createServer(app2);
-const { Server } = require("socket.io");
+const {
+    Server
+} = require("socket.io");
 const io = new Server(chatServer);
 const jwt = require("jsonwebtoken");
 const chatController = require("./controllers/Chats");
-const { Socket } = require('dgram');
+const {
+    Socket
+} = require('dgram');
 // const MessageModel = require("../models/Messages");
 
 // connect to mongodb
-mongoose.connect(MONGO_URI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    user: 'Zalo',
-    pass: 'ZaloAdminPassword',
-    dbName: 'Zalo',
-    useFindAndModify: false
-})
+mongoose.connect(MONGO_URI)
     .then(res => {
         console.log("connected to mongodb");
     })
@@ -35,11 +36,18 @@ mongoose.connect(MONGO_URI, {
 
 // use middleware to parse body req to json
 
-
+app.use(express.static('public')); 
+app.use('/files', express.static('files'));
 // use middleware to enable cors
 app.use(cors());
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+app.use(express.json({
+    limit: "5000mb"
+}));
+app.use(express.urlencoded({
+    limit: "5000mb",
+    extended: true,
+    parameterLimit: 50000
+}));
 // route middleware
 app.use("/", mainRouter);
 
@@ -126,12 +134,12 @@ io.on('connection', (socket) => {
                 decoded = jwt.verify(msg.token, process.env.JWT_SECRET);
                 msg.senderId = decoded.id;
                 delete msg.token;
-                if(msg.type == "block"){
+                if (msg.type == "block") {
                     msg.data = await chatController.blockChat(msg);
-                }else{
+                } else {
                     msg.data = await chatController.unBlockChat(msg);
                 }
-                
+
                 delete msg.chatId;
                 if (msg.data !== null) {
                     if (socketIds[msg.senderId]) {
@@ -159,7 +167,7 @@ io.on('connection', (socket) => {
                 msg.senderId = decoded.id;
                 delete msg.token;
                 msg.data = await chatController.recallMessage(msg);
-                
+
                 delete msg.chatId;
                 if (msg.data !== null) {
                     if (socketIds[msg.senderId]) {

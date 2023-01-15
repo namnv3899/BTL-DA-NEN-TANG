@@ -10,6 +10,7 @@ const {
 const uploadFile = {};
 
 uploadFile.matchesFileBase64 = (fileBase64) => {
+    // console.log('fileBase64:', fileBase64);
     const matches = fileBase64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
     if (!Array.isArray(matches) || matches.length !== 3) {
 	console.log(matches.length)
@@ -37,7 +38,7 @@ uploadFile.uploadFile = (fileBase64) => {
     } else if (type.toString().includes(DOCUMENT_TYPE_IMAGE)) {
         documentType = DOCUMENT_TYPE_IMAGE;
     }
-    let fileName = documentType == DOCUMENT_TYPE_VIDEO?uuidv4() + ".mp4":uuidv4()+".jpg"
+    let fileName = documentType == DOCUMENT_TYPE_VIDEO?uuidv4() + ".mp4": uuidv4()+".jpg"
     try {
         fs.writeFileSync("./files/" + fileName, imageBuffer, 'utf8');
         return ({
@@ -51,3 +52,5 @@ uploadFile.uploadFile = (fileBase64) => {
 }
 
 module.exports = uploadFile;
+
+
